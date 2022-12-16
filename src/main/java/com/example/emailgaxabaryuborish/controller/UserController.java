@@ -5,6 +5,7 @@ import com.example.emailgaxabaryuborish.payload.UserDto;
 import com.example.emailgaxabaryuborish.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +23,7 @@ public class UserController {
     @PostMapping("/qoshish")
     public HttpEntity<?> userAdd(@RequestBody UserDto userDto){
         ApiResponse apiResponse=userService.UserAdd(userDto);
-        return null;
+       return ResponseEntity.status(apiResponse.isHolat()? HttpStatus.OK:HttpStatus.ALREADY_REPORTED).body(apiResponse.getXabar());
 
 
 

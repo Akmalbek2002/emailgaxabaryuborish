@@ -45,6 +45,8 @@ public class Users implements UserDetails {
     private Timestamp tahrirlanganVaqt;
     @OneToMany
     private List<Lavozim> lavozimList;
+    @Column(nullable = false)
+    private String emailCode;
     private boolean accountNonExpired=true;
     private boolean accountNonLocked=true;
     private boolean credentialsNonExpired=true;

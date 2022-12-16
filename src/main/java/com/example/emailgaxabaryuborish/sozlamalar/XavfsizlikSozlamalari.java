@@ -22,7 +22,7 @@ public class XavfsizlikSozlamalari extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("users/oqish").permitAll()
+                .antMatchers("/users/qoshish").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
