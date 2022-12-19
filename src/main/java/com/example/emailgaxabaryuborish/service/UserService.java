@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.apache.coyote.http11.Constants.a;
@@ -65,7 +66,15 @@ public class UserService {
     }
 
     public ApiResponse userConfirm(String email, String emailcode) {
-        System.out.println(email+"  "+emailcode);
-           return null;
+       // System.out.println(email+"  "+emailcode);
+        Optional<Users> byUsernameAndEmailCode = userRepository.findByUsernameAndEmailCode(email, emailcode);
+        if(byUsernameAndEmailCode.isPresent()){
+            Users users = byUsernameAndEmailCode.get();
+            users.setEnabled(true);
+            users.setEmailCode(null);
+            userRepository.save(users);
+            return new ApiResponse("Profilingiz faollashtirildi",true);
+        }
+        return new ApiResponse("Profillingiz allaqachon faollashtirilgan", false);
     }
 }
