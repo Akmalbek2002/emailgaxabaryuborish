@@ -22,7 +22,7 @@ public class XavfsizlikSozlamalari extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/users/qoshish").permitAll()
+                .antMatchers("/users/qoshish","/users/qoshish/tasdiqlash").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -33,7 +33,7 @@ public class XavfsizlikSozlamalari extends WebSecurityConfigurerAdapter {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
-        mailSender.setUsername("axrorovakmal256@gmail.com");
+        mailSender.setUsername("axrorovakmal4@gmail.com");
         mailSender.setPassword("kyvynyplkzrwqvpw");
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol","smtp");

@@ -14,6 +14,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
@@ -43,8 +44,8 @@ public class Users implements UserDetails {
     private Timestamp yaratilganVaqt;
     @UpdateTimestamp
     private Timestamp tahrirlanganVaqt;
-    @OneToMany
-    private List<Lavozim> lavozimList;
+    @ManyToOne
+    private Lavozim lavozim;
     @Column(nullable = false)
     private String emailCode;
     private boolean accountNonExpired=true;
@@ -53,7 +54,7 @@ public class Users implements UserDetails {
     private boolean enabled=false;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return lavozimList;
+        return Collections.singleton(lavozim);
     }
 
 }

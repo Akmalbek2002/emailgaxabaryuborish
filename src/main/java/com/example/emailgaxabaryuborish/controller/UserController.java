@@ -9,10 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -24,8 +21,10 @@ public class UserController {
     public HttpEntity<?> userAdd(@RequestBody UserDto userDto){
         ApiResponse apiResponse=userService.UserAdd(userDto);
        return ResponseEntity.status(apiResponse.isHolat()? HttpStatus.OK:HttpStatus.ALREADY_REPORTED).body(apiResponse.getXabar());
-
-
-
+    }
+    @GetMapping("/tasdiqlash")
+    public HttpEntity<?> userConfirm(@RequestParam String email,@RequestParam String emailcode){
+        ApiResponse apiResponse=userService.userConfirm(email,emailcode);
+        return ResponseEntity.status(apiResponse.isHolat()?200:409).body(apiResponse.getXabar());
     }
 }
