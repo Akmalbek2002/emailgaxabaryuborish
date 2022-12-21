@@ -3,12 +3,21 @@ package com.example.emailgaxabaryuborish.service;
 import com.example.emailgaxabaryuborish.entity.Enum.Lavozimlar;
 import com.example.emailgaxabaryuborish.entity.Users;
 import com.example.emailgaxabaryuborish.payload.ApiResponse;
+import com.example.emailgaxabaryuborish.payload.LoginDto;
 import com.example.emailgaxabaryuborish.payload.UserDto;
 import com.example.emailgaxabaryuborish.repository.LavozimRepository;
 import com.example.emailgaxabaryuborish.repository.UserRepository;
+import com.example.emailgaxabaryuborish.token.TokenGenerator;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +28,8 @@ import static org.apache.coyote.http11.Constants.a;
 import static org.hibernate.cfg.AvailableSettings.USER;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
+
     @Autowired
     JavaMailSender mailSender;
     @Autowired
@@ -28,6 +38,10 @@ public class UserService {
     UserRepository userRepository;
     @Autowired
     LavozimRepository lavozimRepository;
+    @Autowired
+    AuthenticationManager authenticationManager;
+    @Autowired
+    TokenGenerator tokenGenerator;
     public ApiResponse UserAdd(UserDto userDto) {
         boolean b = userRepository.existsByUsername(userDto.getUsername());
         if(b){
@@ -76,5 +90,31 @@ public class UserService {
             return new ApiResponse("Profilingiz faollashtirildi",true);
         }
         return new ApiResponse("Profillingiz allaqachon faollashtirilgan", false);
+    }
+
+    public ApiResponse login(LoginDto loginDto) {
+    //    boolean b = userRepository.existsByUsernameAndPassword(loginDto.getUsername(), loginDto.getPassword());
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+        if(authenticate.isAuthenticated()){
+            Optional<Users> byUsernameAndEmailCode = userRepository.findByUsernameAndEmailCode(loginDto.getUsername(), null);
+            if(byUsernameAndEmailCode.isPresent()){
+                Users principal = (Users) authenticate.getPrincipal();
+
+                return new ApiResponse("Profilingizga xush kelibsiz"+tokenGenerator.getToken(principal.getUsername()),true);
+
+            }
+            return new ApiResponse("Profillingiz faollashtirilmagan",false);
+        }
+        return new ApiResponse("Login yoki parol xato",false);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<Users> byUsername = userRepository.findByUsername(username);
+        if(byUsername.isPresent()){
+            return byUsername.get();
+        }
+        throw new UsernameNotFoundException("Bunday foydalanuvchi mavjud emas");
+
     }
 }

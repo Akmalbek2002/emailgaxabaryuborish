@@ -1,2 +1,7 @@
-package com.example.emailgaxabaryuborish.service;public class MahsulotService {
+package com.example.emailgaxabaryuborish.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class MahsulotService {
 }
